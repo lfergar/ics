@@ -1,0 +1,23 @@
+- hosts: all
+  sudo: yes
+  roles:
+  - sssd
+  - EEEautofs
+  - cs-studio
+  - openxal
+  - ipython-notebook
+
+  tasks:
+
+  - name: Send the reboot signal
+    shell: /usr/sbin/shutdown -r +1
+    async: 0
+    poll: 0
+
+  - name: Wait for a minute!
+    debug: msg="The machine will reboot in a minute. After the reboot you can login with your LDAP username & password and start developing."
+
+
+
+
+

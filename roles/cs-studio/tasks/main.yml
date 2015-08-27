@@ -1,0 +1,11 @@
+  - name: Download packaged cs-studio
+    get_url: url="https://artifactory01.esss.lu.se/artifactory/ansible-provision/cs-studio-4.1.2-linux.gtk.x86_64.tar.gz" dest="/opt/cs-studio-4.1.2-linux.gtk.x86_64.tar.gz"
+
+  - name: Unpackage cs-studio
+    unarchive: src="/opt/cs-studio-4.1.2-linux.gtk.x86_64.tar.gz" dest="/opt/" copy=no
+
+  - name: Remove tarball
+    file: path="/opt/cs-studio-4.1.2-linux.gtk.x86_64.tar.gz" state=absent
+
+  - name: Create symlink in /usr/bin/
+    file: src="/opt/cs-studio/cs-studio" dest="/usr/bin/css" state=link

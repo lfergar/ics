@@ -1,0 +1,117 @@
+---
+#Install epel repository
+# TODO: we need to define global variable os_family and use the "when" statement to install different packages. 
+# WARINING: I tried to use SL6.5 and running into many problems to install python
+
+- name: installing epel repository
+  yum: name=http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm state=present
+
+#Install required packages
+- name: installing make 
+  yum: name=make state=present 
+- name: installing "readline" library  
+  yum: name=readline-devel state=present 
+- name: installing gcc
+  yum: name=gcc state=present 
+- name: installing gcc-c++
+  yum: name=gcc-c++ state=present 
+- name: installing git
+  yum: name=git state=present 
+- name: installing pandoc
+  yum: name=pandoc state=present 
+- name: installing graphviz
+  yum: name='graphviz*' state=present
+- name: installting python
+  yum: name=python2 state=present
+- name: installing python-devel state=present
+  yum: name=python-devel state=present
+- name: installing python-zmq 
+  yum: name=python-zmq state=present
+- name: python-matplotlib
+  yum: name=python-matplotlib state=present
+- name: installing python-pymongo
+  yum: name=python-pymongo state=present
+- name: installing scipy
+  yum: name=scipy state=present
+- name: installing perl-ExtUtils-CBuilder
+  yum: name=perl-ExtUtils-CBuilder state=present
+- name: installing perl-Pod-Checker state=present
+  yum: name=perl-Pod-Checker state=present
+
+# Warning: problems trying to run this on SL6.5 
+- name: installing invoke
+  easy_install: name=invoke
+- name: installing lessc
+  yum: name=python-lesscpy state=present
+- name: installing pip 
+  yum: name=python-pip state=present
+- name: installing ipython
+  command: pip install "ipython[notebook]"
+
+- name: installing bz2file
+  easy_install: name=bz2file
+- name: installing cython
+  easy_install: name=cython
+- name: installing jira
+  easy_install: name=jira
+- name: installing oauthlib
+  easy_install: name=oauthlib
+- name: installing oct2py
+  easy_install: name=oct2py
+- name: installing pandocfilters
+  easy_install: name=pandocfilters
+- name: installing pillow
+  easy_install: name=pillow
+- name: installing pyepics
+  easy_install: name=pyepics
+- name: installing pygraphviz
+  easy_install: name=pygraphviz
+- name: installing pypandoc
+  easy_install: name=pypandoc
+- name: requests-oauthlib
+  easy_install: name=requests-oauthlib
+- name: installing restkit
+  easy_install: name=restkit
+- name: installing sympy
+  easy_install: name=sympy
+- name: installing tlslite
+  easy_install: name=tlslite
+- name: installing xlsxwriter
+  easy_install: name=xlsxwriter
+- name: intalling jinja2
+  easy_install: name=jinja2
+- name: installing tornado
+  easy_install: name=tornado
+- name: installing jsonschema
+  easy_install: name=jsonschema
+
+#- command: easy_install bz2file cython jira oauthlib oct2py pandocfilters pillow pyepics pygraphviz pypandoc requests-oauthlib restkit sympy tlslite xlsxwriter 
+
+# Start ipython notebook
+- name: Flushing iptables 
+  shell: iptables -F
+- name: creating working folder structure for ipython
+  file: path=/home/vagrant/ipython/notebooks state=directory 
+- name: changing owner of the ipython folder structure 
+  file: path=/home/vagrant/ipython/notebooks owner=vagrant mode=0666
+- name: Copying example of OpenXAL notebook into working directory
+  unarchive: src="notebooks.tar" dest=/home/vagrant/ipython/ copy=yes
+  tags: ipython-copy-example
+#- name: Copying ssh welcome message
+#  unarchive: src="welcome.tar" dest=/etc/profile.d/ copy=yes
+#- name: Adding execution permisions to welcome script
+#  file: path=/etc/profile.d/welcome.sh mode="a+wrx"
+#- name: Copying ssh welcome message
+#  copy: src=welcome.sh dest=/etc/profile.d/welcome.sh owner=root group=root mode=0777
+
+- name: Add ipython daemon to startup scripts dir
+  copy: src="ipythond" dest="/etc/init.d/ipythond" mode=0555
+- name: Launch ipythond and configure it to start on boot
+  service: name=ipythond state=started enabled=yes
+  tags: ipython_run
+
+#- shell: "echo Welcome to the ESS Ipython Notebook Environment, dashboard: http://localhost:7878"
+#  tags: ipython-welcome-msg
+
+- name: Install firefox browser
+  yum: name=firefox state=present

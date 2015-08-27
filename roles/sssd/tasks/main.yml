@@ -1,0 +1,28 @@
+  - name: Disable selinux
+    shell: setenforce 0
+    ignore_errors: true
+
+  - name: Disable selinux permanently
+    selinux: state=disabled
+
+  - name: Install sssd and authconfig
+    yum: name={{item}} state=latest
+    with_items:
+      - sssd
+      - authconfig
+
+  - name: Run authconfig
+    shell: authconfig --enablesssd --enablesssdauth --enablemkhomedir --update
+
+  - name: Ensure a line present in ldap conf file
+    lineinfile: dest="/etc/openldap/ldap.conf" line="TLS_CACERTDIR /etc/openldap/certs" state=present
+
+  - name: Configure sssd.conf
+    copy: src=sssd.conf dest=/etc/sssd/sssd.conf mode=600
+
+  - name: Restart sssd
+    service: name=sssd state=restarted enabled=yes 
+
+  - name: Add user to sudoers
+    lineinfile: 'dest="/etc/sudoers" line="ALL ALL=(ALL) NOPASSWD: ALL" insertafter=EOF'
+

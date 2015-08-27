@@ -1,0 +1,64 @@
+#!/bin/sh
+# chkconfig: 345 60 40
+
+PROCESS="$(pgrep -x ipython)"
+
+do_start()
+{
+   if [ "$PROCESS" = "" ] ; then
+   	   echo "Starting ipython...";
+   	   systemctl stop firewalld.service
+   	   ipython notebook --notebook-dir=/home/vagrant/ipython/notebooks --ip=* --port=7878 &
+   else
+           echo "ipython already running."
+   fi
+
+}
+
+do_stop()
+{
+   if [ "$PROCESS" != "" ] ; then
+   	   echo "Stopping ipython."
+   	   kill $PROCESS
+   else
+           echo "ipython not running."
+   fi
+}
+
+do_status()
+{
+   if [ "$PROCESS" = "" ] ; then
+           echo "ipython not running."
+   else
+           echo "ipython is currently running. PID:"
+           echo "$PROCESS"
+   fi
+}
+
+do_wait()
+{
+   while [ "$PROCESS" != "" ]
+   do
+   sleep 0.1
+   PROCESS="$(pgrep -x ipython)"
+   done  
+}
+
+case "$1" in
+   start)
+     do_start
+     ;;
+   stop)
+     do_stop
+     ;;
+   status)
+     do_status
+     ;;
+   restart)
+     do_stop
+     do_wait
+     do_start
+     ;;
+esac
+
+exit 0

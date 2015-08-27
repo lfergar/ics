@@ -1,0 +1,38 @@
+---
+  - name: Create a script that sets env vars on login
+    copy: src=ess_epics_env.sh dest=/etc/profile.d/ess_epics_env.sh
+
+  - name: nfs-utils and autofs installed
+    yum: name={{item}} state=latest
+    with_items:
+      - nfs-utils
+      - autofs 
+
+  - name: Create sym link in /opt/ pointing to mountpoints
+    file: src=/nfs/{{ item }} dest=/opt/{{ item }} state=link force=yes
+    with_items:
+      - "{{ DIR1 }}"
+
+  - name: Modify auto.misc
+    lineinfile: dest=/etc/auto.misc insertbefore=BOF line="{{item}}"
+    with_items:
+      - "{{ DIR1 }} -fstype=nfs4 {{ SERVER }}:/export/{{ DIR1 }}"
+
+  - name: Modify auto.master
+    lineinfile: dest=/etc/auto.master insertbefore=BOF line="/nfs /etc/auto.misc  --timeout=5"
+
+  - name: Restart autofs
+    service: name=autofs enabled=yes state=restarted
+
+
+
+
+
+
+
+
+
+
+
+
+

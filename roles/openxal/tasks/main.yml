@@ -1,0 +1,40 @@
+---
+- name: installing git
+  yum: name=git state=present 
+# Download and install Oracle JDK
+- debug: msg="url=http://download.oracle.com/otn-pub/java/jdk/{{ JDK_VERSION }}-{{ JDK_BUILD_VERSION }}/jdk-{{ JDK_VERSION }}-linux-x64.rpm"
+#- shell: >
+#      curl -LO "http://download.oracle.com/otn-pub/java/jdk/{{ JDK_VERSION }}-{{ JDK_BUILD_VERSION }}/jdk-{{ JDK_VERSION }}-linux-x64.rpm" -H 'Cookie: oraclelicense=accept-securebackup-cookie'
+#  tags: 
+#    - jdk
+#- get_url: url="https://artifactory01.esss.lu.se/artifactory/ansible-provision/jdk-{{ JDK_VERSION }}-linux-x64.rpm" dest="/tmp/jdk-{{ JDK_VERSION }}-linux-x64.rpm"
+
+- yum: name="https://artifactory01.esss.lu.se/artifactory/ansible-provision/jdk-{{ JDK_VERSION }}-linux-x64.rpm" state=present
+  sudo: True
+  tags: 
+    - "install-jdk"
+
+#- yum: name=/tmp/jdk-{{ JDK_VERSION }}-linux-x64.rpm state=present
+#  sudo: True
+#  tags: 
+#    - "install-jdk"
+#- file: path=/tmp/jdk-{{ JDK_VERSION }}-linux-x64.rpm state=absent
+#  tags: 
+#    - "remove-jdk"
+
+- shell: yum clean all
+  tags: 
+    - "cleanup-jdk"
+# Download and install OpenXAL 
+- file: path=/opt/openxal state=directory
+  tags: 
+    - "create-openxal-folder"
+- name: Downloading OpenXAL from git
+  git: repo=https://bitbucket.org/europeanspallationsource/openxal-installation dest=/opt/openxal/openxal-installation
+  tags: 
+    - "checkout-git"
+- name: Installing OpenXAL
+  shell: /opt/openxal/openxal-installation/install-update.sh && source /opt/openxal/openxal-installation/openxal-environment.sh && source /opt/openxal/openxal-installation/install-update-jpype.sh
+  tags: 
+    - "install-openxal"
+
