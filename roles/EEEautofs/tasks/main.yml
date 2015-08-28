@@ -12,11 +12,13 @@
     file: src=/nfs/{{ item }} dest=/opt/{{ item }} state=link force=yes
     with_items:
       - "{{ DIR1 }}"
+      - "{{ DIR2 }}"
 
   - name: Modify auto.misc
     lineinfile: dest=/etc/auto.misc insertbefore=BOF line="{{item}}"
     with_items:
       - "{{ DIR1 }} -fstype=nfs4 {{ SERVER }}:/export/{{ DIR1 }}"
+      - "{{ DIR2 }} -fstype=nfs4 {{ SERVER }}:/export/sdk/{{ DIR2 }}"
 
   - name: Modify auto.master
     lineinfile: dest=/etc/auto.master insertbefore=BOF line="/nfs /etc/auto.misc  --timeout=5"

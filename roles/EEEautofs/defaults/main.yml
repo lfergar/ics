@@ -1,3 +1,4 @@
 ---
 DIR1: "epics"
+DIR2: "eldk-5.6"
 SERVER: "ics-boot-01.esss.lu.se"

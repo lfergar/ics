@@ -1,0 +1,25 @@
+  - name: Check if oracleJDK already installed
+    shell: rpm -qa jdk*
+    register: oracle_check
+
+  - name: Remote download oracleJDK
+    shell: >
+      curl -LO "http://download.oracle.com/otn-pub/java/jdk/{{ JDK_VERSION }}-{{ JDK_BUILD_VERSION }}/jdk-{{ JDK_VERSION }}-linux-x64.rpm" -H 'Cookie: oraclelicense=accept-securebackup-cookie'
+    when: oracle_check.stdout.find('{{ PACKAGE }}')== -1 and REMOTE_DOWNLOAD
+
+  - name: Remote install Oracle JDK
+    yum: name=jdk-{{ JDK_VERSION }}-linux-x64.rpm state=installed
+    when: oracle_check.stdout.find('{{ PACKAGE }}')== -1 and REMOTE_DOWNLOAD
+
+  - name: Erase package
+    file: path=jdk-{{ JDK_VERSION }}-linux-x64.rpm state=absent
+    when: oracle_check.stdout.find('{{ PACKAGE }}')== -1 and REMOTE_DOWNLOAD
+
+  - name: Artifactory install oracleJDK 
+    yum: name="https://artifactory01.esss.lu.se/artifactory/ansible-provision/jdk-{{ JDK_VERSION }}-linux-x64.rpm" state=present
+    when: oracle_check.stdout.find('{{ PACKAGE }}')== -1 and not REMOTE_DOWNLOAD
+
+  - name: Set JAVA_HOME env variable
+    lineinfile: dest="/etc/environment" insertafter=BOF line="{{ item }}"
+    with_items:
+    - 'export JAVA_HOME={{ JAVA_HOME }}'
