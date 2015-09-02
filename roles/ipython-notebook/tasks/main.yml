@@ -84,6 +84,8 @@
   easy_install: name=tornado
 - name: installing jsonschema
   easy_install: name=jsonschema
+- name: installing and upgrading jpype
+  pip: name=jpype1 state=latest  
 
 #- command: easy_install bz2file cython jira oauthlib oct2py pandocfilters pillow pyepics pygraphviz pypandoc requests-oauthlib restkit sympy tlslite xlsxwriter 
 
