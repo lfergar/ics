@@ -3,9 +3,9 @@
   roles:
   - sssd
   - EEEautofs
-  - cs-studio
-  - openxal
-  - ipython-notebook
+#  - cs-studio
+#  - openxal
+#  - ipython-notebook
 
   tasks:
 

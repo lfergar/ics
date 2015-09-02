@@ -1,6 +1,6 @@
 ---
   - name: Create a script that sets env vars on login
-    copy: src=ess_epics_env.sh dest=/etc/profile.d/ess_epics_env.sh
+    unarchive: src=ess_epics_env.tar.gz dest=/etc/profile.d/
 
   - name: nfs-utils and autofs installed
     yum: name={{item}} state=latest
