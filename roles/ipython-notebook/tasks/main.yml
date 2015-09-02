@@ -95,8 +95,9 @@
 - name: changing owner of the ipython folder structure 
   file: path=/home/vagrant/ipython/notebooks owner=vagrant mode=0666
 - name: Copying example of OpenXAL notebook into working directory
-  unarchive: src="notebooks.tar" dest=/home/vagrant/ipython/ copy=yes
-  tags: ipython-copy-example
+  copy: src=notebooks dest=/home/vagrant/ipython/ mode=0777
+#  unarchive: src="notebooks.tar" dest=/home/vagrant/ipython/ copy=yes
+#  tags: ipython-copy-example
 #- name: Copying ssh welcome message
 #  unarchive: src="welcome.tar" dest=/etc/profile.d/ copy=yes
 #- name: Adding execution permisions to welcome script
